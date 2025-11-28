@@ -10,6 +10,7 @@ dotenv.config()
 
 // router imports
 const userRoute = require('./routes/userRoutes')
+const blogRoute = require('./routes/blogRoutes')
 
 // mongdb connection
 connectDB()
@@ -23,7 +24,8 @@ app.use(express.json())
 app.use(morgan("dev"))
 
 // routes
-app.use('/api/v1/users', userRoute)
+app.use('/api/v1/user', userRoute)
+app.use('/api/v1/blog', blogRoute)
 
 // app.get('/', (req,res)=>{
 //     res.status(200).send({

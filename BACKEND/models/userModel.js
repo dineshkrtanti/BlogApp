@@ -4,20 +4,26 @@ const userSchema = new mongoose.Schema(
     {
         username: {
             type: String,
-            required: [true, "username is required"],
+            require: [true, "username is required"],
             unique: true
         },
         email: {
             type: String,
-            required: [true, "email is required"],
+            require: [true, "email is required"],
             pattern: "^.+@.+\\..+$",
             unique: true
             
         },
         password: {
             type: String,
-            required: [true, "password is required"]
-        }
+            require: [true, "password is required"]
+        },
+        blogs:[
+            {
+                type: mongoose.Types.ObjectId,
+                ref: 'blog',
+            }
+        ]
 
     }, 
     { timestamps: true }
