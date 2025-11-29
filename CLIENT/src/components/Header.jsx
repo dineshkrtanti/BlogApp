@@ -31,7 +31,7 @@ const Header = () => {
         <div className="flex justify-between h-16 items-center">
           
           {/* Logo */}
-          <Link to="/" className="text-2xl font-bold text-green-600 tracking-tighter" onClick={closeMenu}>
+          <Link to="/" className="text-2xl font-bold text-green-500 tracking-tighter" onClick={closeMenu}>
             CARD Charity Blog
           </Link>
 

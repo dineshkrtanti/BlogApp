@@ -17,7 +17,7 @@ const EditBlog = () => {
   useEffect(() => {
     const fetchBlogData = async () => {
       try {
-        const { data } = await axios.get(backendUrl `/blog/get-blog/${id}`);
+        const { data } = await axios.get(backendUrl + `/api/v1/blog/get-blog/${id}`);
         if (data?.success && data?.singleBlog) {
           setInputs({
             title: data.singleBlog.title,
@@ -45,33 +45,33 @@ const EditBlog = () => {
     }
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  try {
-    const formData = new FormData();
-    formData.append('title', inputs.title);
-    formData.append('description', inputs.description);
-    formData.append('user', localStorage.getItem('userId'));
-    if (file) formData.append('image', file);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('title', inputs.title);
+      formData.append('description', inputs.description);
+      formData.append('user', localStorage.getItem('userId'));
+      if (file) formData.append('image', file);
 
-    const { data } = await axios.put(
-      `http://localhost:8080/api/v1/blog/update-blog/${id}`,
-      formData,
-      { headers: { 'Content-Type': 'multipart/form-data' } }
-    );
+      const { data } = await axios.put(
+        backendUrl + `/api/v1/blog/update-blog/${id}`,
+        formData,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+      );
 
-    if (data?.success) {
-      toast.success('Blog Updated Successfully');
-      navigate('/my-blogs');
+      if (data?.success) {
+        toast.success('Blog Updated Successfully');
+        navigate('/my-blogs');
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to update blog');
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error(error);
-    toast.error('Failed to update blog');
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4">
@@ -125,18 +125,17 @@ const handleSubmit = async (e) => {
 
           {/* Buttons */}
           <div className="flex gap-4">
-         <button
-  type="submit"
-  disabled={loading}
-  className={`flex-1 py-3 font-bold rounded-lg shadow-md text-white flex items-center justify-center gap-2 ${
-    loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'
-  } transition`}
->
-  {loading && (
-    <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-  )}
-  {loading ? 'Updating...' : 'Update Blog'}
-</button>
+            <button
+              type="submit"
+              disabled={loading}
+              className={`flex-1 py-3 font-bold rounded-lg shadow-md text-white flex items-center justify-center gap-2 ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'
+                } transition`}
+            >
+              {loading && (
+                <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+              )}
+              {loading ? 'Updating...' : 'Update Blog'}
+            </button>
 
 
 

@@ -35,7 +35,7 @@ const CreateBlog = () => {
       if (file) formData.append('image', file);
 
       const { data } = await axios.post(
-         backendUrl + '/blog/create-blog',
+         backendUrl + '/api/v1/blog/create-blog',
         formData,
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );
