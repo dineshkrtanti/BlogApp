@@ -8,7 +8,7 @@ const Home = () => {
 
   const getAllBlogs = async () => {
     try {
-      const { data } = await axios.get(backendUrl +`/blog/all-blogs?ts=${Date.now()}`);
+      const { data } = await axios.get(backendUrl +`/api/v1/blog/all-blogs?ts=${Date.now()}`);
       if (data?.success) {
         setBlogs(data?.blogs);
       }
@@ -29,7 +29,7 @@ const Home = () => {
   return (
     <div className="bg-gray-50 min-h-screen py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-bold text-center text-gray-800 mb-2">Latest Writings</h1>
+        <h1 className="text-4xl font-bold text-center text-gray-800 mb-2">Latest Blogs</h1>
         <div className="w-24 h-1 bg-green-500 mx-auto rounded mb-10"></div>
 
         {blogs.length === 0 ? (

@@ -14,7 +14,7 @@ const MyBlogs = () => {
     try {
       const userId = localStorage.getItem('userId');
       const { data } = await axios.get(
-         backendUrl + `/blog/user-blog/${userId}`,
+         backendUrl + `/api/v1/blog/user-blog/${userId}`,
         { headers: { 'Cache-Control': 'no-cache' } }
       );
 
@@ -48,7 +48,7 @@ const MyBlogs = () => {
 
     try {
       const { data } = await axios.delete(
-        backendUrl + `/blog/delete-blog/${id}`
+        backendUrl + `/api/v1/blog/delete-blog/${id}`
       );
 
       if (data?.success) {
