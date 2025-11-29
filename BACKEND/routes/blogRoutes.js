@@ -6,7 +6,7 @@ const { getAllBlogsController,
         deleteBlogController,
         userBlogController
       } = require('../controllers/blogController')
-
+const upload = require('../middlewares/uploadImage')
 const router = express.Router()
 
 // routes
@@ -17,10 +17,10 @@ router.get('/all-blogs', getAllBlogsController)
 router.get('/get-blog/:id', getBlogByIdController)
 
 // POST || Create Blog
-router.post('/create-blog', createBlogController)
+router.post('/create-blog', upload.single('image'), createBlogController)
 
 // PUT || Update Blog
-router.put('/update-blog/:id', updateBlogController)
+router.put('/update-blog/:id', upload.single('image'),updateBlogController)
 
 // DELETE || Delete Blog
 router.delete('/delete-blog/:id', deleteBlogController)
