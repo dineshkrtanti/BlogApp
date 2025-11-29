@@ -1,7 +1,6 @@
 const express = require('express')
 const cors = require('cors')
 const morgan = require('morgan')
-const colors = require('colors')
 const dotenv = require('dotenv')
 const connectDB = require("./config/db")
 
@@ -27,11 +26,11 @@ app.use(morgan("dev"))
 app.use('/api/v1/user', userRoute)
 app.use('/api/v1/blog', blogRoute)
 
-// app.get('/', (req,res)=>{
-//     res.status(200).send({
-//         "message" : "node server started successfully"
-//     })
-// })
+app.get('/', (req,res)=>{
+    res.status(200).send({
+        "message" : "node server started successfully"
+    })
+})
 
 
 
