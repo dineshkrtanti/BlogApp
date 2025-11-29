@@ -1,3 +1,4 @@
+const cloudinary = require("../config/cloudinary");
 const mongoose  = require('mongoose')
 const blogModel = require('../models/blogModel')
 const userModel = require('../models/userModel')
@@ -39,17 +40,8 @@ exports.getAllBlogsController = async (req, res) => {
 exports.createBlogController = async (req, res) => {
   try {
     const { title, description, user } = req.body;
-    let image;
 
-    if (req.file && req.file.path) {
-      image = req.file.path; // Cloudinary URL
-    } else {
-      return res.status(400).send({
-        success: false,
-        message: "Please upload an image",
-      });
-    }
-
+    // Validate fields
     if (!title || !description || !user) {
       return res.status(400).send({
         success: false,
@@ -57,6 +49,7 @@ exports.createBlogController = async (req, res) => {
       });
     }
 
+    // Validate user
     const existingUser = await userModel.findById(user);
     if (!existingUser) {
       return res.status(404).send({
@@ -65,7 +58,35 @@ exports.createBlogController = async (req, res) => {
       });
     }
 
-    const newBlog = new blogModel({ title, description, image, user });
+    // Validate image
+    if (!req.file) {
+      return res.status(400).send({
+        success: false,
+        message: "Please upload an image",
+      });
+    }
+
+    // ⭐ Upload to Cloudinary using upload_stream
+    const uploadedImage = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        {
+          folder: "card_blog_images",
+          transformation: [{ width: 800, height: 600, crop: "limit" }],
+        },
+        (err, result) => {
+          if (err) reject(err);
+          else resolve(result);
+        }
+      ).end(req.file.buffer);
+    });
+
+    // Create blog
+    const newBlog = new blogModel({
+      title,
+      description,
+      image: uploadedImage.secure_url, // Cloudinary URL
+      user,
+    });
 
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -87,7 +108,7 @@ exports.createBlogController = async (req, res) => {
     return res.status(500).send({
       success: false,
       message: "Error while creating blog!",
-      error,
+      error: error.message,
     });
   }
 };
@@ -132,11 +153,30 @@ exports.updateBlogController = async (req, res) => {
 
     const updateData = { title, description };
 
-    if (req.file && req.file.path) {
-      updateData.image = req.file.path; // new Cloudinary image
+    // Check if a new image is uploaded
+    if (req.file) {
+      // Upload new image to Cloudinary
+      const uploadedImage = await new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          {
+            folder: "card_blog_images",
+            transformation: [{ width: 800, height: 600, crop: "limit" }],
+          },
+          (err, result) => {
+            if (err) reject(err);
+            else resolve(result);
+          }
+        ).end(req.file.buffer);
+      });
+
+      updateData.image = uploadedImage.secure_url; // Update Cloudinary URL
     }
 
-    const updatedBlog = await blogModel.findByIdAndUpdate(id, updateData, { new: true });
+    const updatedBlog = await blogModel.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true }
+    );
 
     return res.status(200).send({
       success: true,
@@ -149,10 +189,11 @@ exports.updateBlogController = async (req, res) => {
     return res.status(500).send({
       success: false,
       message: "Error while updating blog!",
-      error,
+      error: error.message,
     });
   }
 };
+
 
 
 // Delete Blog

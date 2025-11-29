@@ -1,16 +1,11 @@
-const multer = require('multer');
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const cloudinary = require('../config/cloudinary');
+const multer = require("multer");
 
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'card_blog_images',      // Cloudinary folder
-    allowed_formats: ['jpg', 'png', 'jpeg', 'webp', 'tiff'],
-    transformation: [{ width: 800, height: 600, crop: "limit" }],
-  },
+// Store file in memory instead of disk
+const storage = multer.memoryStorage();
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit (optional)
 });
-
-const upload = multer({ storage });
 
 module.exports = upload;
