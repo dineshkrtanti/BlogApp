@@ -41,7 +41,7 @@ const BlogCard = ({
           {title}
         </h2>
 
-        <p className="text-gray-600 text-sm leading-relaxed mb-4 grow whitespace-pre-wrap">
+        <p className="text-gray-600 text-lg leading-relaxed mb-4 grow whitespace-pre-wrap">
           {description}
         </p>
 
