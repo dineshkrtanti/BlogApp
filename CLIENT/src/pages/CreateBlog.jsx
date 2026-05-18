@@ -4,8 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 const CreateBlog = () => {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL
-  const id = localStorage.getItem('userId');
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate();
   const [inputs, setInputs] = useState({ title: '', description: '' });
   const [file, setFile] = useState(null);
@@ -31,13 +30,20 @@ const CreateBlog = () => {
       const formData = new FormData();
       formData.append('title', inputs.title);
       formData.append('description', inputs.description);
-      formData.append('user', id);
+      // ✅ No longer sending 'user' in body — backend gets it from JWT token
       if (file) formData.append('image', file);
 
+      const token = localStorage.getItem('token');
+
       const { data } = await axios.post(
-         backendUrl + '/api/v1/blog/create-blog',
+        backendUrl + '/api/v1/blog/create-blog',
         formData,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${token}`,  // ✅ Send token
+          },
+        }
       );
 
       if (data?.success) {
@@ -46,7 +52,7 @@ const CreateBlog = () => {
       }
     } catch (error) {
       console.error(error);
-      toast.error('Something went wrong');
+      toast.error(error.response?.data?.message || 'Something went wrong');
     } finally {
       setLoading(false);
     }
@@ -58,7 +64,6 @@ const CreateBlog = () => {
         <h2 className="text-3xl font-bold text-gray-800 mb-6">Write a new Story</h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Title */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
             <input
@@ -71,7 +76,6 @@ const CreateBlog = () => {
             />
           </div>
 
-          {/* Image Upload */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Upload Image</label>
             <input
@@ -81,15 +85,10 @@ const CreateBlog = () => {
               className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500"
             />
             {preview && (
-              <img
-                src={preview}
-                alt="Preview"
-                className="mt-4 h-48 w-full object-cover rounded-lg border"
-              />
+              <img src={preview} alt="Preview" className="mt-4 h-48 w-full object-cover rounded-lg border" />
             )}
           </div>
 
-          {/* Content */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Content</label>
             <textarea
@@ -102,7 +101,6 @@ const CreateBlog = () => {
             ></textarea>
           </div>
 
-          {/* Button with spinner */}
           <button
             type="submit"
             disabled={loading}
@@ -110,9 +108,7 @@ const CreateBlog = () => {
               loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'
             } transition`}
           >
-            {loading && (
-              <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-            )}
+            {loading && <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>}
             {loading ? 'Publishing...' : 'Publish Blog'}
           </button>
         </form>

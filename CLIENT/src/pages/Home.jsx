@@ -1,14 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react'
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import BlogCard from '../components/BlogCard';
+import { useAuth } from '../context/useAuth';
 
 const Home = () => {
   const [blogs, setBlogs] = useState([]);
-   const backendUrl = import.meta.env.VITE_BACKEND_URL
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const { isLogin } = useAuth();
+  const userId = localStorage.getItem('userId');
 
   const getAllBlogs = async () => {
     try {
-      const { data } = await axios.get(backendUrl +`/api/v1/blog/all-blogs?ts=${Date.now()}`);
+      const { data } = await axios.get(backendUrl + '/api/v1/blog/all-blogs');
       if (data?.success) {
         setBlogs(data?.blogs);
       }
@@ -40,11 +44,10 @@ const Home = () => {
               <BlogCard
                 key={blog?._id}
                 id={blog?._id}
-                isUser={localStorage.getItem('userId') === blog?.user?._id}
+                isUser={isLogin && userId === blog?.user?._id}
                 title={blog?.title}
                 description={blog?.description}
                 image={blog?.image}
-                username={blog?.user?.username}
                 time={blog?.createdAt}
               />
             ))}

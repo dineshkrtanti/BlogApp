@@ -1,21 +1,20 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { CiLogin } from "react-icons/ci";
+import { useAuth } from '../context/useAuth';
 
 const Header = () => {
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(false); // State for mobile menu
-  
-  // Check if user is logged in
-  const isLogin = localStorage.getItem('userId');
+  const [isOpen, setIsOpen] = useState(false);
+  const { isLogin, logout } = useAuth();
 
   const handleLogout = () => {
     try {
-      localStorage.clear();
+      logout();
       toast.success('Logout Successfully');
-      navigate('/login');
-      setIsOpen(false); // Close menu on logout
+      navigate('/');
+      setIsOpen(false);
     } catch (error) {
       console.log(error);
     }
@@ -37,15 +36,19 @@ const Header = () => {
 
           {/* DESKTOP Navigation (Hidden on mobile) */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link to="/" className="text-gray-600 hover:text-green-600 font-medium transition">
+            <NavLink to="/" end className={({ isActive }) =>
+              `font-medium transition border-b-2 pb-0.5 ${isActive ? 'text-green-600 border-green-600' : 'text-gray-600 hover:text-green-600 border-transparent'}`
+            }>
               Home
-            </Link>
-            
+            </NavLink>
+
             {isLogin && (
               <>
-                <Link to="/my-blogs" className="text-gray-600 hover:text-green-600 font-medium transition">
+                <NavLink to="/my-blogs" className={({ isActive }) =>
+                  `font-medium transition border-b-2 pb-0.5 ${isActive ? 'text-green-600 border-green-600' : 'text-gray-600 hover:text-green-600 border-transparent'}`
+                }>
                   Manage Blogs
-                </Link>
+                </NavLink>
                 <Link to="/create-blog" className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition shadow-md">
                   Write New Blog
                 </Link>
@@ -97,23 +100,28 @@ const Header = () => {
       {isOpen && (
         <div className="md:hidden bg-white border-t border-green-100 shadow-lg">
           <div className="px-4 pt-2 pb-4 space-y-2 flex flex-col">
-            <Link 
-              to="/" 
+            <NavLink
+              to="/"
+              end
               onClick={closeMenu}
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-green-600 hover:bg-green-50"
+              className={({ isActive }) =>
+                `block px-3 py-2 rounded-md text-base font-medium ${isActive ? 'text-green-600 bg-green-50 border-l-4 border-green-600' : 'text-gray-700 hover:text-green-600 hover:bg-green-50'}`
+              }
             >
               Home
-            </Link>
+            </NavLink>
 
             {isLogin && (
               <>
-                <Link 
-                  to="/my-blogs" 
+                <NavLink
+                  to="/my-blogs"
                   onClick={closeMenu}
-                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-green-600 hover:bg-green-50"
+                  className={({ isActive }) =>
+                    `block px-3 py-2 rounded-md text-base font-medium ${isActive ? 'text-green-600 bg-green-50 border-l-4 border-green-600' : 'text-gray-700 hover:text-green-600 hover:bg-green-50'}`
+                  }
                 >
                   Manage Blogs
-                </Link>
+                </NavLink>
                 <Link 
                   to="/create-blog" 
                   onClick={closeMenu}

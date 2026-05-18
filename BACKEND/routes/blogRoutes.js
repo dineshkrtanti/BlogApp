@@ -1,32 +1,25 @@
 const express = require('express')
-const { getAllBlogsController,
-        getBlogByIdController,
-        createBlogController,
-        updateBlogController,
-        deleteBlogController,
-        userBlogController
-      } = require('../controllers/blogController')
+const {
+    getAllBlogsController,
+    getBlogByIdController,
+    createBlogController,
+    updateBlogController,
+    deleteBlogController,
+    userBlogController
+} = require('../controllers/blogController')
 const upload = require('../middlewares/uploadImage')
+const authMiddleware = require('../middlewares/authMiddleware')
+
 const router = express.Router()
 
-// routes
-// GET || All Blogs
-router.get('/all-blogs', getAllBlogsController)
+// ─── PUBLIC ───────────────────────────────────────────────
+router.get('/all-blogs',      getAllBlogsController)
+router.get('/get-blog/:id',   getBlogByIdController)
 
-// GET || Get Single Blogs
-router.get('/get-blog/:id', getBlogByIdController)
+// ─── PROTECTED ────────────────────────────────────────────
+router.post('/create-blog',    authMiddleware, upload.single('image'), createBlogController)
+router.put('/update-blog/:id', authMiddleware, upload.single('image'), updateBlogController)
+router.delete('/delete-blog/:id', authMiddleware, deleteBlogController)
+router.get('/user-blog/:id',   authMiddleware, userBlogController)
 
-// POST || Create Blog
-router.post('/create-blog', upload.single('image'), createBlogController)
-
-// PUT || Update Blog
-router.put('/update-blog/:id', upload.single('image'),updateBlogController)
-
-// DELETE || Delete Blog
-router.delete('/delete-blog/:id', deleteBlogController)
-
-// GET || Get blogs by User
-router.get('/user-blog/:id',  userBlogController)
-
-
-module.exports = router;
+module.exports = router
