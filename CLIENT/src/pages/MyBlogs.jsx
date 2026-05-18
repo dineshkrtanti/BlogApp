@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import BlogCard from '../components/BlogCard';
 import toast from 'react-hot-toast';
@@ -13,7 +13,7 @@ const MyBlogs = () => {
   const token = localStorage.getItem('token');
   const userId = localStorage.getItem('userId');
 
-  const getUserBlogs = async () => {
+  const getUserBlogs = useCallback(async () => {
     if (!token) { navigate('/login'); return; }
     setLoading(true);
     try {
@@ -40,11 +40,11 @@ const MyBlogs = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token, userId, backendUrl, navigate]);
 
   useEffect(() => {
     getUserBlogs();
-  }, [token, userId]);
+  }, [getUserBlogs]);
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this blog?')) return;
