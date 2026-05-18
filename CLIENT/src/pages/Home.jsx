@@ -6,29 +6,27 @@ import { useAuth } from '../context/useAuth';
 
 const Home = () => {
   const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const { isLogin } = useAuth();
   const userId = localStorage.getItem('userId');
 
-  const getAllBlogs = async () => {
-    try {
-      const { data } = await axios.get(backendUrl + '/api/v1/blog/all-blogs');
-      if (data?.success) {
-        setBlogs(data?.blogs);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
-    // ✔ FIX: wrap state updates inside effect-safe async function
-    const fetchBlogs = async () => {
-      await getAllBlogs();
+    const getAllBlogs = async () => {
+      try {
+        const { data } = await axios.get(backendUrl + '/api/v1/blog/all-blogs');
+        if (data?.success) {
+          setBlogs(data?.blogs);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    fetchBlogs();
-  }, []);
+    getAllBlogs();
+  }, [backendUrl]);
 
   return (
     <div className="bg-gray-50 min-h-screen py-10">
@@ -36,7 +34,11 @@ const Home = () => {
         <h1 className="text-4xl font-bold text-center text-gray-800 mb-2">Latest Blogs</h1>
         <div className="w-24 h-1 bg-green-500 mx-auto rounded mb-10"></div>
 
-        {blogs.length === 0 ? (
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="w-10 h-10 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : blogs.length === 0 ? (
           <p className="text-center text-gray-500">No blogs found. Login to write one!</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

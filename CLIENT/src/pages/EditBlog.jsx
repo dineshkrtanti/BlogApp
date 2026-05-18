@@ -29,7 +29,7 @@ const EditBlog = () => {
       }
     };
     fetchBlogData();
-  }, [id]);
+  }, [id, backendUrl]);
 
   const handleChange = (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
