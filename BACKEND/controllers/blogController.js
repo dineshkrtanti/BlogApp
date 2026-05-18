@@ -208,6 +208,10 @@ exports.deleteBlogController = async (req, res) => {
 // GET || Blogs by User (protected)
 exports.userBlogController = async (req, res) => {
     try {
+        if (req.user.id !== req.params.id) {
+            return res.status(403).send({ success: false, message: "Unauthorized" })
+        }
+
         const userBlog = await userModel.findById(req.params.id).populate('blogs').select('-password')
 
         if (!userBlog) {
