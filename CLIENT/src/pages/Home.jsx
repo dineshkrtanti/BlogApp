@@ -2,6 +2,7 @@ import React from 'react'
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import BlogCard from '../components/BlogCard';
+import BlogCardSkeleton from '../components/BlogCardSkeleton';
 import { useAuth } from '../context/useAuth';
 
 const Home = () => {
@@ -35,8 +36,8 @@ const Home = () => {
         <div className="w-24 h-1 bg-green-500 mx-auto rounded mb-10"></div>
 
         {loading ? (
-          <div className="flex justify-center items-center py-20">
-            <div className="w-10 h-10 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Array.from({ length: 6 }).map((_, i) => <BlogCardSkeleton key={i} />)}
           </div>
         ) : blogs.length === 0 ? (
           <p className="text-center text-gray-500">No blogs found. Login to write one!</p>

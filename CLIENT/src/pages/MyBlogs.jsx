@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import BlogCard from '../components/BlogCard';
+import BlogCardSkeleton from '../components/BlogCardSkeleton';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
@@ -73,7 +74,9 @@ const MyBlogs = () => {
         <h1 className="text-3xl font-bold text-gray-800 mb-8">My Blog Posts</h1>
 
         {loading ? (
-          <p className="text-xl text-gray-500">Loading blogs...</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Array.from({ length: 6 }).map((_, i) => <BlogCardSkeleton key={i} />)}
+          </div>
         ) : blogs.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {blogs.map((blog) => (
